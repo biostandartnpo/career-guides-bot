@@ -1,41 +1,14 @@
-import asyncio
 import logging
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils import executor
-from yookassa import Configuration, Payment
-import uuid
 import os
 
-# Настройки
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-YUKASSA_SHOP_ID = os.getenv("YUKASSA_SHOP_ID")
-YUKASSA_SECRET_KEY = os.getenv("YUKASSA_SECRET_KEY")
-
-Configuration.account_id = YUKASSA_SHOP_ID
-Configuration.secret_key = YUKASSA_SECRET_KEY
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
-
-PRODUCTS = {
-    "resume": {
-        "name": "Гайд «Как написать резюме, которое не выбросят за 10 секунд»",
-        "price": 590,
-        "file": "resume.pdf"
-    },
-    "interview": {
-        "name": "Гайд «Как пройти собеседование и получить оффер»",
-        "price": 590,
-        "file": "interview.pdf"
-    },
-    "bundle": {
-        "name": "Оба гайда со скидкой",
-        "price": 990,
-        "file": None
-    }
-}
 
 @dp.message_handler(commands=["start"])
 async def start(message: types.Message):
@@ -59,48 +32,33 @@ async def start(message: types.Message):
 
 @dp.callback_query_handler(lambda c: c.data.startswith("buy_"))
 async def buy(callback: types.CallbackQuery):
-    product_key = callback.data.replace("buy_", "")
-    product = PRODUCTS[product_key]
-
-    payment = Payment.create({
-        "amount": {
-            "value": str(product["price"]) + ".00",
-            "currency": "RUB"
-        },
-        "confirmation": {
-            "type": "redirect",
-            "return_url": "https://t.me/" + (await bot.get_me()).username
-        },
-        "capture": True,
-        "description": product["name"],
-        "metadata": {
-            "user_id": str(callback.from_user.id),
-            "product_key": product_key
-        }
-    }, uuid.uuid4())
-
-    kb = InlineKeyboardMarkup()
-    kb.add(InlineKeyboardButton("💳 Оплатить", url=payment.confirmation.confirmation_url))
-    kb.add(InlineKeyboardButton("✅ Я оплатил — проверить", callback_data=f"check_{payment.id}_{product_key}"))
-
+    prices = {
+        "buy_resume": ("Гайд по резюме", "590"),
+        "buy_interview": ("Гайд по собеседованию", "590"),
+        "buy_bundle": ("Оба гайда", "990"),
+    }
+    name, price = prices[callback.data]
+    kb = InlineKeyboardMarkup(row_width=1)
+    kb.add(InlineKeyboardButton("💳 Оплатить", callback_data="pay_soon"))
+    kb.add(InlineKeyboardButton("⬅️ Назад", callback_data="back"))
     await callback.message.answer(
-        f"*{product['name']}*\n\n"
-        f"Сумма: *{product['price']} ₽*\n\n"
-        "Нажми «Оплатить», заверши оплату и вернись сюда. "
-        "Затем нажми «Я оплатил — проверить» и получи гайд.",
+        f"*{name}*\n\n"
+        f"Сумма: *{price} ₽*\n\n"
+        "После оплаты гайд придёт сюда автоматически.",
         reply_markup=kb,
         parse_mode="Markdown"
     )
     await callback.answer()
 
-@dp.callback_query_handler(lambda c: c.data.startswith("check_"))
-async def check_payment(callback: types.CallbackQuery):
-    parts = callback.data.split("_")
-    payment_id = parts[1]
-    product_key = parts[2]
+@dp.callback_query_handler(lambda c: c.data == "pay_soon")
+async def pay_soon(callback: types.CallbackQuery):
+    await callback.message.answer("⏳ Оплата скоро будет доступна. Следите за обновлениями!")
+    await callback.answer()
 
-    payment = Payment.find_one(payment_id)
+@dp.callback_query_handler(lambda c: c.data == "back")
+async def back(callback: types.CallbackQuery):
+    await callback.message.delete()
+    await callback.answer()
 
-    if payment.status == "succeeded":
-        product = PRODUCTS[product_key]
-        await
+if __name__ == "__main__":
+    executor.start_polling(dp, skip_updates=True)
