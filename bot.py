@@ -26,7 +26,7 @@ async def start(message: types.Message):
     )
     await bot.send_photo(
         message.chat.id,
-        photo=open("welcome.png", "rb"),
+        photo=open("/data/welcome.png", "rb"),
         caption=(
             "👋 Привет! Я бот *КарьераПро* — твой помощник в карьере.\n\n"
             "У меня два практических гайда:\n\n"
