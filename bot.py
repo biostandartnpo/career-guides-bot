@@ -18,19 +18,28 @@ bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
 
 PRODUCTS = {
+    "nebo": {
+        "name": "Гайд «В небо с нуля» 🔥 Акция",
+        "price": "790.00",
+        "file": "V_nebo.pdf"
+    },
     "resume": {"name": "Гайд по резюме", "price": "390.00", "file": "resume.pdf"},
     "interview": {"name": "Гайд по собеседованию", "price": "390.00", "file": "interview.pdf"},
-    "bundle": {"name": "Оба гайда", "price": "749.00", "file": None},
+    "bundle": {"name": "Оба гайда", "price": "700.00", "file": None},
 }
 
 @dp.message_handler(commands=["start"])
 async def start(message: types.Message):
     kb = InlineKeyboardMarkup(row_width=1)
     kb.add(
-        InlineKeyboardButton("📄 Гайд по резюме — 390 ₽", callback_data="buy_resume"),
-        InlineKeyboardButton("🎯 Гайд по собеседованию — 390 ₽", callback_data="buy_interview"),
-        InlineKeyboardButton("🔥 Оба гайда — 749 ₽ (скидка 31 ₽)", callback_data="buy_bundle"),
-    )
+    InlineKeyboardButton(
+        "✈️ Гайд «В небо с нуля» — 790 ₽ 🔥 Акция",
+        callback_data="buy_nebo"
+    ),
+    InlineKeyboardButton("📄 Гайд по резюме — 390 ₽", callback_data="buy_resume"),
+    InlineKeyboardButton("🎯 Гайд по собеседованию — 390 ₽", callback_data="buy_interview"),
+    InlineKeyboardButton("🔥 Оба гайда — 749 ₽ (скидка 31 ₽)", callback_data="buy_bundle"),
+)
     await bot.send_photo(
         message.chat.id,
         photo=open("/data/welcome.png", "rb"),
