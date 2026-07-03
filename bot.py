@@ -38,14 +38,16 @@ async def start(message: types.Message):
     ),
     InlineKeyboardButton("📄 Гайд по резюме — 390 ₽", callback_data="buy_resume"),
     InlineKeyboardButton("🎯 Гайд по собеседованию — 390 ₽", callback_data="buy_interview"),
-    InlineKeyboardButton("🔥 Оба гайда — 749 ₽ (скидка 31 ₽)", callback_data="buy_bundle"),
+    InlineKeyboardButton("🔥 Оба гайда — 700 ₽", callback_data="buy_bundle"),
 )
     await bot.send_photo(
         message.chat.id,
         photo=open("/data/welcome.png", "rb"),
         caption=(
             "👋 Привет! Я бот *КарьераПро* — твой помощник в карьере.\n\n"
-            "У меня два практических гайда:\n\n"
+            "У меня есть несколько практических гайда:\n\n"
+            "📄 *В небо с нуля* - профессия бортпроводник\n"
+            "— подготовка резюме, основные требования, подготовка к собеседованию\n\n"
             "📄 *Как написать резюме, которое не выбросят за 10 секунд*\n"
             "— структура, примеры, частые ошибки, готовый шаблон\n\n"
             "🎯 *Как пройти собеседование и получить оффер*\n"
