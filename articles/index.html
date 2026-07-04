@@ -7,6 +7,11 @@ permalink: /articles/
 <div class="list-grid">
   {% for post in site.posts %}
   <a class="list-card" href="{{ post.url | relative_url }}">
+    {% if post.image %}
+      <div class="thumb" style="background-image: url('{{ post.image | relative_url }}')"></div>
+    {% else %}
+      <div class="thumb thumb-placeholder">✈️</div>
+    {% endif %}
     <span class="meta">{{ post.date | date: "%-d %B %Y" }}</span>
     <h3>{{ post.title }}</h3>
     <p>{{ post.description | default: post.excerpt | strip_html | truncate: 130 }}</p>

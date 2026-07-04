@@ -14,6 +14,11 @@ permalink: /vacancies/obshie/
   {% assign filtered = site.vacancies | where: 'category', 'general' | sort: 'date_posted' | reverse %}
   {% for job in filtered %}
   <a class="list-card" href="{{ job.url | relative_url }}">
+    {% if job.image %}
+      <div class="thumb" style="background-image: url('{{ job.image | relative_url }}')"></div>
+    {% else %}
+      <div class="thumb thumb-placeholder">💼</div>
+    {% endif %}
     <h3>{{ job.title }}</h3>
     <p>🏢 {{ job.company }} · 📍 {{ job.location }}</p>
     {% if job.salary_min %}<p>💰 {{ job.salary_min }}{% if job.salary_max %}–{{ job.salary_max }}{% endif %} ₽</p>{% endif %}

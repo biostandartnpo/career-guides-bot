@@ -12,6 +12,11 @@ layout: default
       {% endif %}
     </p>
   </header>
+  {% if page.image %}
+    <div class="banner" style="background-image: url('{{ page.image | relative_url }}')"></div>
+  {% else %}
+    <div class="banner banner-placeholder">✈️</div>
+  {% endif %}
   <div class="article-body">
     {{ content }}
   </div>

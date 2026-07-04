@@ -7,12 +7,17 @@ description: >-
 ---
 <section class="hero">
   <div class="wrap">
-    <span class="badge">🔥 Акция на гайд «В небо с нуля»</span>
-    <h1>Практические гайды и вакансии,<br>которые двигают карьеру вперёд</h1>
-    <p class="lead">Резюме, собеседования и вход в профессию бортпроводника — короткие, конкретные гайды без воды, статьи об авиации и актуальные вакансии. Покупка гайдов и доставка PDF — прямо в Telegram.</p>
-    <div class="hero-actions">
-      <a class="btn btn-primary" href="#guides">Выбрать гайд</a>
-      <a class="btn btn-ghost" href="{{ '/vacancies/bortprovodniki/' | relative_url }}">Вакансии бортпроводника</a>
+    <div class="hero-copy">
+      <span class="badge">🔥 Акция на гайд «В небо с нуля»</span>
+      <h1>Практические гайды и вакансии,<br>которые двигают карьеру вперёд</h1>
+      <p class="lead">Резюме, собеседования и вход в профессию бортпроводника — короткие, конкретные гайды без воды, статьи об авиации и актуальные вакансии. Покупка гайдов и доставка PDF — прямо в Telegram.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#guides">Выбрать гайд</a>
+        <a class="btn btn-ghost" href="{{ '/vacancies/bortprovodniki/' | relative_url }}">Вакансии бортпроводника</a>
+      </div>
+    </div>
+    <div class="hero-media">
+      <span class="hero-media-caption">КарьераПро ✈️</span>
     </div>
   </div>
 </section>
@@ -69,6 +74,11 @@ description: >-
     <div class="list-grid">
       {% for post in site.posts limit:3 %}
       <a class="list-card" href="{{ post.url | relative_url }}">
+        {% if post.image %}
+          <div class="thumb" style="background-image: url('{{ post.image | relative_url }}')"></div>
+        {% else %}
+          <div class="thumb thumb-placeholder">✈️</div>
+        {% endif %}
         <span class="meta">{{ post.date | date: "%-d %B %Y" }}</span>
         <h3>{{ post.title }}</h3>
         <p>{{ post.description | default: post.excerpt | strip_html | truncate: 110 }}</p>
@@ -88,6 +98,11 @@ description: >-
       {% assign latest_vacancies = site.vacancies | sort: 'date_posted' | reverse %}
       {% for job in latest_vacancies limit:3 %}
       <a class="list-card" href="{{ job.url | relative_url }}">
+        {% if job.image %}
+          <div class="thumb" style="background-image: url('{{ job.image | relative_url }}')"></div>
+        {% else %}
+          <div class="thumb thumb-placeholder">💼</div>
+        {% endif %}
         {% if job.category == 'bortprovodnik' %}<span class="tag-chip">Бортпроводникам</span>{% endif %}
         <h3>{{ job.title }}</h3>
         <p>🏢 {{ job.company }} · 📍 {{ job.location }}</p>
