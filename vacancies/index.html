@@ -1,0 +1,23 @@
+---
+layout: page
+title: Вакансии
+description: Актуальные вакансии — как общие предложения по работе, так и вакансии специально для бортпроводников.
+permalink: /vacancies/
+---
+<div class="category-tabs">
+  <a href="{{ '/vacancies/' | relative_url }}" class="active">Все вакансии</a>
+  <a href="{{ '/vacancies/bortprovodniki/' | relative_url }}">Бортпроводникам</a>
+  <a href="{{ '/vacancies/obshie/' | relative_url }}">Общие</a>
+</div>
+
+<div class="list-grid">
+  {% assign all_vacancies = site.vacancies | sort: 'date_posted' | reverse %}
+  {% for job in all_vacancies %}
+  <a class="list-card" href="{{ job.url | relative_url }}">
+    {% if job.category == 'bortprovodnik' %}<span class="tag-chip">Бортпроводникам</span>{% endif %}
+    <h3>{{ job.title }}</h3>
+    <p>🏢 {{ job.company }} · 📍 {{ job.location }}</p>
+    {% if job.salary_min %}<p>💰 {{ job.salary_min }}{% if job.salary_max %}–{{ job.salary_max }}{% endif %} ₽</p>{% endif %}
+  </a>
+  {% endfor %}
+</div>

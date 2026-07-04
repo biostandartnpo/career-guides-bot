@@ -1,0 +1,24 @@
+---
+layout: page
+title: Общие вакансии
+description: Общие вакансии и предложения по работе — вне зависимости от профессии.
+permalink: /vacancies/obshie/
+---
+<div class="category-tabs">
+  <a href="{{ '/vacancies/' | relative_url }}">Все вакансии</a>
+  <a href="{{ '/vacancies/bortprovodniki/' | relative_url }}">Бортпроводникам</a>
+  <a href="{{ '/vacancies/obshie/' | relative_url }}" class="active">Общие</a>
+</div>
+
+<div class="list-grid">
+  {% assign filtered = site.vacancies | where: 'category', 'general' | sort: 'date_posted' | reverse %}
+  {% for job in filtered %}
+  <a class="list-card" href="{{ job.url | relative_url }}">
+    <h3>{{ job.title }}</h3>
+    <p>🏢 {{ job.company }} · 📍 {{ job.location }}</p>
+    {% if job.salary_min %}<p>💰 {{ job.salary_min }}{% if job.salary_max %}–{{ job.salary_max }}{% endif %} ₽</p>{% endif %}
+  </a>
+  {% else %}
+  <p>Пока нет открытых вакансий в этой категории — загляните позже.</p>
+  {% endfor %}
+</div>

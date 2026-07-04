@@ -1,0 +1,23 @@
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-col">
+      <div class="logo">Карьера<span>Про</span></div>
+      <p>Практические гайды, статьи и вакансии для тех, кто строит карьеру бортпроводника и работает над резюме и собеседованиями.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Разделы</h4>
+      <a href="{{ '/' | relative_url }}#guides">Гайды</a>
+      <a href="{{ '/articles/' | relative_url }}">Статьи</a>
+      <a href="{{ '/vacancies/' | relative_url }}">Вакансии</a>
+      <a href="{{ '/vacancies/bortprovodniki/' | relative_url }}">Вакансии для бортпроводников</a>
+    </div>
+    <div class="footer-col">
+      <h4>Связь</h4>
+      <a href="{{ site.telegram_bot }}" target="_blank" rel="noopener">Telegram-бот</a>
+      <a href="{{ '/feed.xml' | relative_url }}">RSS статей</a>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    &copy; {{ site.time | date: '%Y' }} КарьераПро. Все гайды и материалы защищены авторским правом.
+  </div>
+</footer>

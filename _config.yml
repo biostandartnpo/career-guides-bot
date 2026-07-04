@@ -1,0 +1,48 @@
+title: КарьераПро
+tagline: Гайды, статьи и вакансии для тех, кто строит карьеру бортпроводника
+description: >-
+  Практические гайды по трудоустройству бортпроводником, статьи о профессии
+  и авиации, а также вакансии для бортпроводников и другие предложения по работе.
+url: "https://biostandartnpo.github.io"
+baseurl: "/career-guides-bot"
+lang: ru
+timezone: Europe/Moscow
+
+telegram_bot: "https://t.me/rabota_guide_bot"
+
+author:
+  name: КарьераПро
+
+collections:
+  vacancies:
+    output: true
+    permalink: /vacancies/:path/
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      category: articles
+  - scope:
+      path: ""
+      type: vacancies
+    values:
+      layout: vacancy
+      seo:
+        type: WebPage
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-feed
+
+sass:
+  style: compressed
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - node_modules

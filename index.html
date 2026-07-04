@@ -1,0 +1,156 @@
+---
+layout: default
+title: КарьераПро — гайды, статьи и вакансии для бортпроводников
+description: >-
+  Практические гайды по трудоустройству бортпроводником, статьи о профессии
+  и авиации, а также вакансии для бортпроводников и общие предложения по работе.
+---
+<section class="hero">
+  <div class="wrap">
+    <span class="badge">🔥 Акция на гайд «В небо с нуля»</span>
+    <h1>Практические гайды и вакансии,<br>которые двигают карьеру вперёд</h1>
+    <p class="lead">Резюме, собеседования и вход в профессию бортпроводника — короткие, конкретные гайды без воды, статьи об авиации и актуальные вакансии. Покупка гайдов и доставка PDF — прямо в Telegram.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#guides">Выбрать гайд</a>
+      <a class="btn btn-ghost" href="{{ '/vacancies/bortprovodniki/' | relative_url }}">Вакансии бортпроводника</a>
+    </div>
+  </div>
+</section>
+
+<section id="guides">
+  <div class="wrap">
+    <div class="section-title">
+      <h2>Гайды</h2>
+      <p>Выбирайте гайд и получайте его сразу после оплаты — файл пришлёт бот в Telegram.</p>
+    </div>
+    <div class="grid">
+      <div class="card featured">
+        <span class="tag">Акция</span>
+        <div class="icon">✈️</div>
+        <h3>В небо с нуля</h3>
+        <p class="desc">Как стать бортпроводником: требования авиакомпаний, подготовка резюме именно под эту профессию и подготовка к собеседованию.</p>
+        <div class="price-row"><span class="price">790 ₽</span></div>
+        <a class="btn btn-primary btn-block" href="{{ site.telegram_bot }}" target="_blank" rel="noopener">Купить в боте</a>
+      </div>
+
+      <div class="card">
+        <div class="icon">📄</div>
+        <h3>Гайд по резюме</h3>
+        <p class="desc">Как написать резюме, которое не выбросят за 10 секунд: структура, примеры, частые ошибки и готовый шаблон.</p>
+        <div class="price-row"><span class="price">390 ₽</span></div>
+        <a class="btn btn-ghost btn-block" href="{{ site.telegram_bot }}" target="_blank" rel="noopener">Купить в боте</a>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎯</div>
+        <h3>Гайд по собеседованию</h3>
+        <p class="desc">Как пройти собеседование и получить оффер: подготовка, сложные вопросы, переговоры о зарплате.</p>
+        <div class="price-row"><span class="price">390 ₽</span></div>
+        <a class="btn btn-ghost btn-block" href="{{ site.telegram_bot }}" target="_blank" rel="noopener">Купить в боте</a>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔥</div>
+        <h3>Оба гайда</h3>
+        <p class="desc">Резюме + собеседование одним комплектом дешевле, чем по отдельности.</p>
+        <div class="price-row"><span class="price">700 ₽</span><span class="price-old">780 ₽</span></div>
+        <a class="btn btn-ghost btn-block" href="{{ site.telegram_bot }}" target="_blank" rel="noopener">Купить в боте</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head-row">
+      <h2>Свежие статьи</h2>
+      <a href="{{ '/articles/' | relative_url }}">Все статьи →</a>
+    </div>
+    <div class="list-grid">
+      {% for post in site.posts limit:3 %}
+      <a class="list-card" href="{{ post.url | relative_url }}">
+        <span class="meta">{{ post.date | date: "%-d %B %Y" }}</span>
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.description | default: post.excerpt | strip_html | truncate: 110 }}</p>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head-row">
+      <h2>Актуальные вакансии</h2>
+      <a href="{{ '/vacancies/' | relative_url }}">Все вакансии →</a>
+    </div>
+    <div class="list-grid">
+      {% assign latest_vacancies = site.vacancies | sort: 'date_posted' | reverse %}
+      {% for job in latest_vacancies limit:3 %}
+      <a class="list-card" href="{{ job.url | relative_url }}">
+        {% if job.category == 'bortprovodnik' %}<span class="tag-chip">Бортпроводникам</span>{% endif %}
+        <h3>{{ job.title }}</h3>
+        <p>🏢 {{ job.company }} · 📍 {{ job.location }}</p>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-title">
+      <h2>Как это работает</h2>
+      <p>Весь процесс — покупка, оплата и получение гайда — проходит в Telegram, за 3 шага.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h4>Открываете бота</h4>
+        <p>Нажимаете «Открыть бота» и выбираете нужный гайд в меню.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h4>Оплачиваете</h4>
+        <p>Безопасная оплата через ЮKassa — картой, СБП или другим удобным способом.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h4>Получаете PDF</h4>
+        <p>Бот сразу присылает файл гайда в чат — сохраняйте и пользуйтесь.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="cta-band">
+      <h2>Готовы прокачать карьеру?</h2>
+      <p>Откройте бота, выберите гайд и получите его за пару минут.</p>
+      <a class="btn btn-primary" href="{{ site.telegram_bot }}" target="_blank" rel="noopener">Открыть Telegram-бота</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-title">
+      <h2>Вопросы и ответы</h2>
+    </div>
+    <div style="max-width: 640px; margin: 0 auto;">
+      <div class="faq-item">
+        <h4>Как я получу гайд после оплаты?</h4>
+        <p>Сразу в Telegram-чате с ботом — нажмите «Я оплатил», и файл придёт автоматически.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Какие способы оплаты доступны?</h4>
+        <p>Оплата проходит через ЮKassa: банковские карты, СБП и другие популярные методы.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Как разместить вакансию на сайте?</h4>
+        <p>Напишите нам в Telegram — добавим вашу вакансию в раздел «Вакансии» или «Бортпроводникам».</p>
+      </div>
+    </div>
+  </div>
+</section>

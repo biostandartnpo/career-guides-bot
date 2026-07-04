@@ -1,0 +1,66 @@
+---
+layout: default
+---
+<article class="wrap vacancy-single">
+  <p class="breadcrumb">
+    <a href="{{ '/' | relative_url }}">Главная</a> /
+    <a href="{{ '/vacancies/' | relative_url }}">Вакансии</a>
+    {% if page.category == 'bortprovodnik' %} / <a href="{{ '/vacancies/bortprovodniki/' | relative_url }}">Бортпроводникам</a>{% endif %}
+  </p>
+  <header class="vacancy-header">
+    {% if page.category == 'bortprovodnik' %}<span class="badge">Бортпроводникам</span>{% endif %}
+    <h1>{{ page.title }}</h1>
+    <ul class="vacancy-facts">
+      <li>🏢 {{ page.company }}</li>
+      <li>📍 {{ page.location }}</li>
+      {% if page.salary_min %}<li>💰 {{ page.salary_min }}{% if page.salary_max %}–{{ page.salary_max }}{% endif %} ₽</li>{% endif %}
+      <li>🗓 Опубликовано {{ page.date_posted | date: "%-d %B %Y" }}</li>
+    </ul>
+  </header>
+
+  <div class="vacancy-body">
+    {{ content }}
+  </div>
+
+  <div class="cta-band">
+    <h2>Готовы откликнуться?</h2>
+    <p>Свяжитесь с нами, чтобы отправить резюме на эту вакансию.</p>
+    <a class="btn btn-primary" href="{{ page.apply_url | default: site.telegram_bot }}" target="_blank" rel="noopener">Откликнуться</a>
+  </div>
+</article>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "JobPosting",
+  "title": {{ page.title | jsonify }},
+  "description": {{ page.excerpt | strip_html | strip_newlines | jsonify }},
+  "datePosted": {{ page.date_posted | date_to_xmlschema | jsonify }},
+  {% if page.valid_through %}"validThrough": {{ page.valid_through | date_to_xmlschema | jsonify }},{% endif %}
+  "employmentType": {{ page.employment_type | default: "FULL_TIME" | jsonify }},
+  "hiringOrganization": {
+    "@type": "Organization",
+    "name": {{ page.company | jsonify }}
+  },
+  "jobLocation": {
+    "@type": "Place",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": {{ page.location | jsonify }},
+      "addressCountry": "RU"
+    }
+  }
+  {% if page.salary_min %},
+  "baseSalary": {
+    "@type": "MonetaryAmount",
+    "currency": {{ page.currency | default: "RUB" | jsonify }},
+    "value": {
+      "@type": "QuantitativeValue",
+      "minValue": {{ page.salary_min | jsonify }},
+      {% if page.salary_max %}"maxValue": {{ page.salary_max | jsonify }},{% endif %}
+      "unitText": "MONTH"
+    }
+  }
+  {% endif %}
+}
+</script>
