@@ -14,6 +14,7 @@ Configuration.account_id = YUKASSA_SHOP_ID
 Configuration.secret_key = YUKASSA_SECRET_KEY
 
 logging.basicConfig(level=logging.INFO)
+
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
 
@@ -26,20 +27,28 @@ PRODUCTS = {
     "resume": {"name": "Гайд по резюме", "price": "390.00", "file": "resume.pdf"},
     "interview": {"name": "Гайд по собеседованию", "price": "390.00", "file": "interview.pdf"},
     "bundle": {"name": "Оба гайда", "price": "700.00", "file": None},
+    "autopost": {
+        "name": "Гайд «Автопостинг Instagram через Claude + Metricool»",
+        "price": "490.00",
+        "file": "autopost.pdf"
+    },
 }
+
 
 @dp.message_handler(commands=["start"])
 async def start(message: types.Message):
     kb = InlineKeyboardMarkup(row_width=1)
     kb.add(
-    InlineKeyboardButton(
-        "✈️ Гайд «В небо с нуля» — 790 ₽ 🔥 Акция",
-        callback_data="buy_nebo"
-    ),
-    InlineKeyboardButton("📄 Гайд по резюме — 390 ₽", callback_data="buy_resume"),
-    InlineKeyboardButton("🎯 Гайд по собеседованию — 390 ₽", callback_data="buy_interview"),
-    InlineKeyboardButton("🔥 Оба гайда — 700 ₽", callback_data="buy_bundle"),
-)
+        InlineKeyboardButton(
+            "✈️ Гайд «В небо с нуля» — 790 ₽ 🔥 Акция",
+            callback_data="buy_nebo"
+        ),
+        InlineKeyboardButton("📄 Гайд по резюме — 390 ₽", callback_data="buy_resume"),
+        InlineKeyboardButton("🎯 Гайд по собеседованию — 390 ₽", callback_data="buy_interview"),
+        InlineKeyboardButton("🔥 Оба гайда — 700 ₽", callback_data="buy_bundle"),
+        InlineKeyboardButton("🤖 Гайд «Автопостинг Instagram» — 490 ₽", callback_data="buy_autopost"),
+    )
+
     await bot.send_photo(
         message.chat.id,
         photo=open("/data/welcome.png", "rb"),
@@ -52,11 +61,14 @@ async def start(message: types.Message):
             "— структура, примеры, частые ошибки, готовый шаблон\n\n"
             "🎯 *Как пройти собеседование и получить оффер*\n"
             "— подготовка, сложные вопросы, переговоры о зарплате\n\n"
+            "🤖 *Автопостинг Instagram через Claude + Metricool*\n"
+            "— веди свой блог на автомате, пока ищешь работу мечты\n\n"
             "Выбирай гайд и прокачивай карьеру! 👇"
         ),
         reply_markup=kb,
         parse_mode="Markdown"
     )
+
 
 @dp.callback_query_handler(lambda c: c.data.startswith("buy_"))
 async def buy(callback: types.CallbackQuery):
@@ -64,6 +76,7 @@ async def buy(callback: types.CallbackQuery):
     product = PRODUCTS[product_key]
 
     bot_info = await bot.get_me()
+
     payment = Payment.create({
         "amount": {"value": product["price"], "currency": "RUB"},
         "confirmation": {
@@ -84,6 +97,7 @@ async def buy(callback: types.CallbackQuery):
         InlineKeyboardButton("✅ Я оплатил — получить гайд", callback_data=f"check_{payment.id}_{product_key}"),
         InlineKeyboardButton("⬅️ Назад", callback_data="back")
     )
+
     await callback.message.answer(
         f"*{product['name']}*\n\n"
         f"Сумма: *{product['price'].replace('.00', '')} ₽*\n\n"
@@ -94,6 +108,7 @@ async def buy(callback: types.CallbackQuery):
         parse_mode="Markdown"
     )
     await callback.answer()
+
 
 @dp.callback_query_handler(lambda c: c.data.startswith("check_"))
 async def check_payment(callback: types.CallbackQuery):
@@ -131,6 +146,7 @@ async def check_payment(callback: types.CallbackQuery):
             "Поделись с другом, кому это может помочь 🙌\n\n"
             "Напиши /start чтобы вернуться в главное меню."
         )
+
     elif payment.status == "pending":
         await callback.message.answer(
             "⏳ Оплата ещё не поступила.\n"
@@ -141,12 +157,15 @@ async def check_payment(callback: types.CallbackQuery):
             "❌ Что-то пошло не так с оплатой.\n"
             "Попробуйте ещё раз или напишите /start"
         )
+
     await callback.answer()
+
 
 @dp.callback_query_handler(lambda c: c.data == "back")
 async def back(callback: types.CallbackQuery):
     await callback.message.delete()
     await callback.answer()
+
 
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
