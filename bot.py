@@ -26,7 +26,6 @@ PRODUCTS = {
     },
     "resume": {"name": "Гайд по резюме", "price": "390.00", "file": "resume.pdf"},
     "interview": {"name": "Гайд по собеседованию", "price": "390.00", "file": "interview.pdf"},
-    "bundle": {"name": "Оба гайда", "price": "700.00", "file": None},
     "autopost": {
         "name": "Гайд «Автопостинг Instagram через Claude + Metricool»",
         "price": "490.00",
@@ -45,7 +44,6 @@ async def start(message: types.Message):
         ),
         InlineKeyboardButton("📄 Гайд по резюме — 390 ₽", callback_data="buy_resume"),
         InlineKeyboardButton("🎯 Гайд по собеседованию — 390 ₽", callback_data="buy_interview"),
-        InlineKeyboardButton("🔥 Оба гайда — 700 ₽", callback_data="buy_bundle"),
         InlineKeyboardButton("🤖 Гайд «Автопостинг Instagram» — 490 ₽", callback_data="buy_autopost"),
     )
 
@@ -62,7 +60,7 @@ async def start(message: types.Message):
             "🎯 *Как пройти собеседование и получить оффер*\n"
             "— подготовка, сложные вопросы, переговоры о зарплате\n\n"
             "🤖 *Автопостинг Instagram через Claude + Metricool*\n"
-            "— веди свой блог на автомате, пока ищешь работу мечты\n\n"
+            "— веди свой блог на автомате, пока ищешь работу мечты (доп.доход)\n\n"
             "Выбирай гайд и прокачивай карьеру! 👇"
         ),
         reply_markup=kb,
@@ -122,23 +120,11 @@ async def check_payment(callback: types.CallbackQuery):
         product = PRODUCTS[product_key]
         await callback.message.answer("✅ Оплата прошла! Отправляю гайд...")
 
-        if product_key == "bundle":
-            await bot.send_document(
-                callback.from_user.id,
-                open("/data/resume.pdf", "rb"),
-                caption="📄 Гайд «Как написать резюме, которое не выбросят за 10 секунд»"
-            )
-            await bot.send_document(
-                callback.from_user.id,
-                open("/data/interview.pdf", "rb"),
-                caption="🎯 Гайд «Как пройти собеседование и получить оффер»"
-            )
-        else:
-            await bot.send_document(
-                callback.from_user.id,
-                open(f"/data/{product['file']}", "rb"),
-                caption=f"📎 {product['name']}"
-            )
+        await bot.send_document(
+            callback.from_user.id,
+            open(f"/data/{product['file']}", "rb"),
+            caption=f"📎 {product['name']}"
+        )
 
         await callback.message.answer(
             "🎉 Спасибо за покупку!\n\n"
