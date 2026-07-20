@@ -25,14 +25,26 @@ PRODUCTS = {
         "name": "Гайд «В небо с нуля» 🔥 Акция",
         "price": "790.00",
         "file": "V_nebo.pdf",
+        "cover": "nebo_cover.jpg",
     },
-    "resume": {"name": "Гайд по резюме", "price": "390.00", "file": "resume.pdf"},
-    "interview": {"name": "Гайд по собеседованию", "price": "390.00", "file": "interview.pdf"},
+    "resume": {
+        "name": "Гайд по резюме",
+        "price": "390.00",
+        "file": "resume.pdf",
+        "cover": "resume_cover.jpg",
+    },
+    "interview": {
+        "name": "Гайд по собеседованию",
+        "price": "390.00",
+        "file": "interview.pdf",
+        "cover": "interview_cover.jpg",
+    },
     # Новый продукт — гайд по автопостингу. Поменяй цену на актуальную.
     "avtopost": {
         "name": "Гайд «Автопостинг Instagram через Claude + Metricool»",
         "price": "490.00",
         "file": "avtopost.pdf",
+        "cover": "avtopost_cover.jpg",
     },
 }
 
@@ -118,16 +130,33 @@ async def send_product_card(chat_id: int, product_key: str):
         InlineKeyboardButton("⬅️ Ко всем гайдам", callback_data="back_to_menu"),
     )
 
-    await bot.send_message(
-        chat_id,
+    text = (
         f"*{product['name']}*\n\n"
         f"Сумма: *{product['price'].replace('.00', '')} ₽*\n\n"
         "1️⃣ Нажми «Оплатить» и заверши оплату\n"
         "2️⃣ Вернись сюда и нажми «Я оплатил»\n"
-        "3️⃣ Получи гайд автоматически 📥",
-        reply_markup=kb,
-        parse_mode="Markdown",
+        "3️⃣ Получи гайд автоматически 📥"
     )
+
+    # Если для товара есть обложка — отправляем её сверху, а текст идёт подписью под ней.
+    # Если файла обложки ещё нет на сервере — не падаем, а просто шлём текстовое сообщение,
+    # как раньше.
+    cover_path = f"/data/{product.get('cover', '')}"
+    if product.get("cover") and os.path.exists(cover_path):
+        await bot.send_photo(
+            chat_id,
+            photo=open(cover_path, "rb"),
+            caption=text,
+            reply_markup=kb,
+            parse_mode="Markdown",
+        )
+    else:
+        await bot.send_message(
+            chat_id,
+            text,
+            reply_markup=kb,
+            parse_mode="Markdown",
+        )
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith("buy_"))
