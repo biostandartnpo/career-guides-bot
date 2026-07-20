@@ -1,10 +1,12 @@
 import logging
+import socket
 import uuid
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils import executor
 from yookassa import Configuration, Payment
 import os
+import aiohttp
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 YUKASSA_SHOP_ID = os.getenv("YUKASSA_SHOP_ID")
@@ -15,7 +17,23 @@ Configuration.secret_key = YUKASSA_SECRET_KEY
 
 logging.basicConfig(level=logging.INFO)
 
+
+class _IPv4TCPConnector(aiohttp.TCPConnector):
+    """
+    Принудительно использует IPv4 при подключении к api.telegram.org.
+    Частая причина ошибки "Network is unreachable" в облачных контейнерах —
+    попытка подключиться по IPv6, для которого нет реального маршрута наружу,
+    хотя IPv4-интернет при этом работает нормально.
+    """
+    def __init__(self, *args, **kwargs):
+        kwargs["family"] = socket.AF_INET
+        super().__init__(*args, **kwargs)
+
+
 bot = Bot(token=BOT_TOKEN)
+# Подменяем класс коннектора ДО первого запроса — сам aiogram создаст
+# сессию лениво при первом обращении, используя уже наш IPv4-класс.
+bot._connector_class = _IPv4TCPConnector
 dp = Dispatcher(bot)
 
 # Каждый товар — отдельный ключ. Именно этот ключ используется в ссылке:
@@ -43,8 +61,8 @@ PRODUCTS = {
     "avtopost": {
         "name": "Гайд «Автопостинг Instagram через Claude + Metricool»",
         "price": "490.00",
-        "file": "avtopost.pdf",
-        "cover": "avtopost_cover.jpg",
+        "file": "autopost.pdf",
+        "cover": "avtopost_cover.png",
     },
 }
 
@@ -151,6 +169,11 @@ async def send_product_card(chat_id: int, product_key: str):
             parse_mode="Markdown",
         )
     else:
+        if product.get("cover"):
+            logging.warning(
+                f"Обложка не найдена по пути {cover_path} — отправляю карточку без фото. "
+                f"Проверь, что файл лежит в репозитории (не только на сервере вручную)."
+            )
         await bot.send_message(
             chat_id,
             text,
@@ -220,4 +243,26 @@ async def back(callback: types.CallbackQuery):
 
 
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    import time
+
+    # Если сеть на старте недоступна (временный сбой у хостинга) — не падаем насмерть,
+    # а пробуем переподключиться с небольшой паузой. Это не чинит саму сетевую проблему,
+    # но избавляет от необходимости вручную нажимать Restart в панели каждый раз.
+    max_retries = 10
+    retry_delay = 15  # секунд между попытками
+
+    for attempt in range(1, max_retries + 1):
+        try:
+            executor.start_polling(dp, skip_updates=True)
+            break
+        except Exception as e:
+            logging.error(
+                f"Попытка {attempt}/{max_retries}: не удалось запустить бота ({e}). "
+                f"Повтор через {retry_delay} сек."
+            )
+            time.sleep(retry_delay)
+    else:
+        logging.critical(
+            "Не удалось запустить бота после всех попыток. "
+            "Похоже на затяжной сетевой сбой — нужна проверка со стороны хостинга."
+        )
